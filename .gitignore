@@ -153,4 +153,4 @@ cython_debug/
 
 *.png
 *.tif
-hist_mod.py
+*.tiff

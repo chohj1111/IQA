@@ -1,6 +1,7 @@
 # pip install piq
 
 import cv2
+import torch
 import torchvision.transforms as T
 from piq import vsi
 
@@ -20,6 +21,10 @@ def get_vsi(input_ndarr, target_ndarr):
     # Convert the image to PyTorch tensor
     input_tensor = transform(input).unsqueeze(0)
     target_tensor = transform(target).unsqueeze(0)
+
+    if torch.cuda.is_available():
+        input_tensor = input_tensor.cuda()
+        target_tensor = target_tensor.cuda()
 
     vsi_value = vsi(input_tensor, target_tensor)
 
