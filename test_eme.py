@@ -1,6 +1,5 @@
 import cv2
 from QA_Metrics.EME import get_eme
-from hist_mod import global_hist_mod
 
 img_1 = cv2.imread("ssim_0_4.png")
 img_2 = cv2.imread("ssim_1_0.png")
