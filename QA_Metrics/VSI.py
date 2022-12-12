@@ -4,6 +4,12 @@ import cv2
 import torchvision.transforms as T
 from piq import vsi
 
+"""
+L. Zhang, Y. Shen, and H. Y. Li,
+“VSI: A visual saliency induced index for perceptual image quality assessment,” 
+IEEE Trans. Image Process., vol. 23, no. 10, pp. 4270–4281, Oct. 2014
+"""
+
 
 def get_vsi(input_ndarr, target_ndarr):
     input = cv2.cvtColor(input_ndarr, cv2.COLOR_BGR2RGB)

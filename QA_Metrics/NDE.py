@@ -3,6 +3,11 @@ import numpy as np
 from fractions import Fraction
 import math
 
+"""
+T. Celik, “Two-dimensional histogram equalization and contrast enhancement,” 
+Pattern Recognit., vol. 45, no. 10, pp. 3810–3824, Oct. 2012.
+"""
+
 
 def _get_pdf(img):
     input_img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2Lab)[:, :, 0]
@@ -19,7 +24,6 @@ def _get_pdf(img):
     #     # print(hist[idx])
     #     hist[idx] = Fraction(hist[idx], num_pixel)
     hist = hist / num_pixel
-    print(np.sum(hist))
 
     return hist
 
@@ -35,8 +39,6 @@ def get_nde(input, target):
 
     input_entropy = _get_entropy(input_pdf)
     target_entropy = _get_entropy(target_pdf)
-
-    print(input_entropy, target_entropy)
 
     nde = 1 / (1 + (math.log(256) - input_entropy) / (math.log(256) - target_entropy))
     return nde
