@@ -1,6 +1,7 @@
+import math
+
 import cv2
 import numpy as np
-import math
 
 """
 T. Celik, “Two-dimensional histogram equalization and contrast enhancement,” 
