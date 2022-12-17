@@ -4,8 +4,8 @@ import cv2
 import torch
 import torchvision.transforms as T
 import numpy as np
+import pyiqa
 
-from piq import brisque, vsi
 from skimage.metrics import structural_similarity
 
 
@@ -14,24 +14,20 @@ from skimage.metrics import structural_similarity
 """
 
 
-def get_brisque(input_ndarr):
+def get_brisque(img):
     """
     Mittal, Anish, Anush Krishna Moorthy, and Alan Conrad Bovik.
     "No-reference image quality assessment in the spatial domain."
     IEEE Transactions on image processing 21.12 (2012): 4695-4708.
     """
-    input = cv2.cvtColor(input_ndarr, cv2.COLOR_BGR2RGB)
+    dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
-    # Convert the image to PyTorch tensor
+    iqa_metric = pyiqa.create_metric("brisque", device=dev)
+
     transform = T.ToTensor()
-    input_tensor = transform(input).unsqueeze(0)
+    input_tensor = transform(img).unsqueeze(0).to(dev)
 
-    if torch.cuda.is_available():
-        input_tensor = input_tensor.cuda()
-
-    brisque_value = brisque(input_tensor)
-
-    return brisque_value.item()
+    return iqa_metric(input_tensor).item()
 
 
 def get_eme(img):
@@ -67,6 +63,17 @@ def get_eme(img):
     return value
 
 
+def get_niqe(img):
+    dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+    iqa_metric = pyiqa.create_metric("niqe", test_y_channel=True, color_space="ycbcr", device=dev)
+
+    transform = T.ToTensor()
+    input_tensor = transform(img).unsqueeze(0).to(dev)
+
+    return iqa_metric(input_tensor).item()
+
+
 """
     Full Reference
 """
@@ -86,13 +93,13 @@ def get_ssim(input, target):
     return ssim_value
 
 
-def get_vsi(input_ndarr, target_ndarr):
+def get_vsi(input_img, target_img):
     """
     L. Zhang, Y. Shen, and H. Y. Li,
     “VSI: A visual saliency induced index for perceptual image quality assessment,”
     IEEE Trans. Image Process., vol. 23, no. 10, pp. 4270–4281, Oct. 2014"""
-    input = cv2.cvtColor(input_ndarr, cv2.COLOR_BGR2RGB)
-    target = cv2.cvtColor(target_ndarr, cv2.COLOR_BGR2RGB)
+    input = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB)
+    target = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
 
     # Convert the image to PyTorch tensor
     transform = T.ToTensor()
@@ -106,6 +113,23 @@ def get_vsi(input_ndarr, target_ndarr):
     vsi_value = vsi(input_tensor, target_tensor)
 
     return vsi_value.item()
+
+
+def get_vsi_pyiqa(input_img, target_img):
+    """
+    Mittal, Anish, Anush Krishna Moorthy, and Alan Conrad Bovik.
+    "No-reference image quality assessment in the spatial domain."
+    IEEE Transactions on image processing 21.12 (2012): 4695-4708.
+    """
+    dev = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+    iqa_metric = pyiqa.create_metric("vsi", device=dev)
+
+    transform = T.ToTensor()
+    input_tensor = transform(input_img).unsqueeze(0).to(dev)
+    target_tensor = transform(target_img).unsqueeze(0).to(dev)
+
+    return iqa_metric(input_tensor, target_tensor).item()
 
 
 """
