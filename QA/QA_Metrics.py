@@ -95,28 +95,6 @@ def get_ssim(input, target):
 
 def get_vsi(input_img, target_img):
     """
-    L. Zhang, Y. Shen, and H. Y. Li,
-    “VSI: A visual saliency induced index for perceptual image quality assessment,”
-    IEEE Trans. Image Process., vol. 23, no. 10, pp. 4270–4281, Oct. 2014"""
-    input = cv2.cvtColor(input_img, cv2.COLOR_BGR2RGB)
-    target = cv2.cvtColor(target_img, cv2.COLOR_BGR2RGB)
-
-    # Convert the image to PyTorch tensor
-    transform = T.ToTensor()
-    input_tensor = transform(input).unsqueeze(0)
-    target_tensor = transform(target).unsqueeze(0)
-
-    if torch.cuda.is_available():
-        input_tensor = input_tensor.cuda()
-        target_tensor = target_tensor.cuda()
-
-    vsi_value = vsi(input_tensor, target_tensor)
-
-    return vsi_value.item()
-
-
-def get_vsi_pyiqa(input_img, target_img):
-    """
     Mittal, Anish, Anush Krishna Moorthy, and Alan Conrad Bovik.
     "No-reference image quality assessment in the spatial domain."
     IEEE Transactions on image processing 21.12 (2012): 4695-4708.
